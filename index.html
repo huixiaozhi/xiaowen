@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灰小之是兽和飞友的网站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#64748B',
+                        accent: '#F97316',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+            .群图片容器 {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1000;
+                text-align: center;
+                padding: 20px;
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 0 0 20px rgba(0,0,0,0.3);
+                max-width: 90%;
+            }
+            .遮罩层 {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.7);
+                z-index: 999;
+            }
+            .nav-btn {
+                width: 80px; 
+                height: 60px;
+                border-radius: 8px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 10px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                color: white;
+                font-weight: bold;
+                font-size: 14px;
+                gap: 4px;
+            }
+            .nav-btn i {
+                font-size: 20px;
+            }
+            .nav-btn.active {
+                background-color: #3B82F6;
+            }
+            .nav-btn.inactive {
+                background-color: #9CA3AF;
+            }
+            .nav-container {
+                position: fixed;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 900;
+                padding: 10px;
+            }
+            .content-section {
+                transition: all 0.5s ease;
+                width: 100%;
+            }
+            .posts-container {
+                display: none;
+                width: 100%;
+                min-height: 100vh;
+                padding-left: 100px;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .main-content {
+                display: block;
+            }
+            .error-message {
+                color: #dc2626;
+                text-align: center;
+                padding: 20px;
+                background-color: #fef2f2;
+                border-radius: 8px;
+            }
+            .download-btn {
+                position: fixed;
+                top: 4px;
+                left: 4px;
+                z-index: 100;
+                background-color: #10B981;
+                color: white;
+                padding: 6px 12px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            .download-btn:hover {
+                background-color: #059669;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+            .preparing-message {
+                text-align: center;
+                padding: 40px;
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                font-size: 20px;
+                color: #374151;
+                max-width: 500px;
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+    <!-- 左上角下载按钮 -->
+    <a href="images/检测电脑是否开机V1.1.zip" download class="download-btn">
+        <i class="fa fa-download"></i>
+        <span>点我下载检测电脑是否开机V1.1</span>
+    </a>
+
+    <!-- 左侧导航按钮 -->
+    <div class="nav-container">
+        <div id="home-btn" class="nav-btn active">
+            <i class="fa fa-home"></i>
+            <span>主页</span>
+        </div>
+        <div id="posts-btn" class="nav-btn inactive">
+            <i class="fa fa-file-text-o"></i>
+            <span>帖子</span>
+        </div>
+    </div>
+
+    <!-- 遮罩层 -->
+    <div class="遮罩层" id="遮罩层"></div>
+    
+    <!-- 群图片容器 -->
+    <div class="群图片容器" id="群图片容器">
+        <img src="images/福瑞群.jpg" alt="灰小之的furry群二维码" class="max-w-full h-auto rounded-lg mb-4"
+             onerror="this.outerHTML='<div class=\'error-message\'>加载失败，请刷新试试，还不行的话请联系我，邮箱：xiaowen20230202@163.com</div>'">
+        <p class="text-sm text-gray-600">扫码加入灰小之的furry群</p>
+    </div>
+
+    <!-- 主页内容区域 -->
+    <div id="home-content" class="content-section main-content w-full max-w-3xl">
+        <header class="w-full max-w-3xl text-center mt-12 mb-8">
+            <h1 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-gray-800 mb-2 text-shadow">
+                欢迎访问灰小之是兽和飞友的网站
+            </h1>
+            <div class="mt-6 mb-8">
+                <img src="images/b_cbaa9281585e01cc7ddea5bf47bb0273.jpg" 
+                     alt="网站相关图片" 
+                     class="max-h-[clamp(1.8rem,5vw,3rem)] h-auto max-w-full rounded-lg shadow-md mx-auto object-contain"
+                     onerror="this.outerHTML='<div class=\'error-message\'>加载失败，请刷新试试，还不行的话请联系我，邮箱：xiaowen20230202@163.com</div>'">
+            </div>
+            <p class="text-secondary text-sm md:text-base italic">
+                此网站创建于2025年8月18日下午
+            </p>
+        </header>
+
+        <main class="w-full max-w-3xl flex-grow flex flex-col items-center justify-center py-8">
+            <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 md:p-10 w-full max-w-xl text-center">
+                <p class="text-gray-700 text-lg md:text-xl leading-relaxed mb-6">
+                    我的帖子还没完成，点击”帖子“一栏里面是啥也没有的</p>
+                <a href="https://space.bilibili.com/3546955215014342" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center justify-center gap-2 bg-[#FB7299] hover:bg-[#F75981] text-white font-medium py-3 px-6 rounded-full transition-custom shadow-md hover:shadow-lg transform hover:-translate-y-0.5 mb-4">
+                    <i class="fa fa-bilibili text-xl"></i>
+                    <span>访问我的哔哩哔哩个人主页</span>
+                </a>
+                <button id="加入群按钮"
+                   class="inline-flex items-center justify-center gap-2 bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-medium py-3 px-6 rounded-full transition-custom shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                    <i class="fa fa-users text-xl"></i>
+                    <span>加入灰小之的furry群</span>
+                </button>
+            </div>
+        </main>
+
+        <footer class="w-full max-w-3xl text-center py-6 text-gray-500 text-sm">
+            <p>此网站为主网站，备用网站链接：xiaowen.xyz
+© 2025 灰小之是兽和飞友的网站 - 保留所有权利
+ICP备案号-想啥呢，我还没备案呢，awa</p>
+        </footer>
+    </div>
+
+    <!-- 帖子内容区域（修改后） -->
+    <div id="posts-content" class="posts-container">
+        <div class="preparing-message">
+            <i class="fa fa-clock-o text-4xl text-primary mb-4"></i>
+            <p>正在准备，请耐心等待</p>
+        </div>
+    </div>
+
+    <script>
+        // 获取元素
+        const 遮罩层 = document.getElementById('遮罩层');
+        const 加入群按钮 = document.getElementById('加入群按钮');
+        const 群图片容器 = document.getElementById('群图片容器');
+        const homeBtn = document.getElementById('home-btn');
+        const postsBtn = document.getElementById('posts-btn');
+        const homeContent = document.getElementById('home-content');
+        const postsContent = document.getElementById('posts-content');
+        
+        // 加入群按钮功能
+        加入群按钮.addEventListener('click', () => {
+            群图片容器.style.display = 'block';
+            遮罩层.style.display = 'block';
+        });
+        
+        // 点击遮罩层关闭弹窗
+        遮罩层.addEventListener('click', () => {
+            群图片容器.style.display = 'none';
+            遮罩层.style.display = 'none';
+        });
+
+        // 阻止弹窗内部点击事件冒泡
+        群图片容器.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && 群图片容器.style.display === 'block') {
+                群图片容器.style.display = 'none';
+                遮罩层.style.display = 'none';
+            }
+        });
+
+        // 导航按钮功能
+        homeBtn.addEventListener('click', () => {
+            homeBtn.classList.remove('inactive');
+            homeBtn.classList.add('active');
+            postsBtn.classList.remove('active');
+            postsBtn.classList.add('inactive');
+            homeContent.style.display = 'block';
+            postsContent.style.display = 'none';
+        });
+        
+        postsBtn.addEventListener('click', () => {
+            postsBtn.classList.remove('inactive');
+            postsBtn.classList.add('active');
+            homeBtn.classList.remove('active');
+            homeBtn.classList.add('inactive');
+            homeContent.style.display = 'none';
+            postsContent.style.display = 'flex'; // 使用flex布局居中显示文字
+        });
+
+        // 为链接添加点击反馈效果
+        document.querySelectorAll('a, button').forEach(element => {
+            element.addEventListener('click', function() {
+                this.classList.add('scale-95');
+                setTimeout(() => {
+                    this.classList.remove('scale-95');
+                }, 200);
+            });
+        });
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('opacity-100');
+            document.body.classList.remove('opacity-0');
+        });
+    </script>
+</body>
+</html>
